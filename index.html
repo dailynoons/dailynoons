@@ -635,12 +635,14 @@
         const netlifyRes = await fetch('/', { method: 'POST', body: formData });
         if (!netlifyRes.ok) throw new Error('Netlify submission failed');
 
-        // Submit to ConvertKit via Netlify Function (avoids CORS issues)
-        const ckRes = await fetch('/.netlify/functions/subscribe', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email })
-        });
+        // Submit to ConvertKit via Netlify proxy (avoids CORS issues)
+        const ckRes = await fetch(
+          `/api/convertkit/v3/forms/${CK_FORM_ID}/subscribe`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ api_key: CK_API_KEY, email })
+          }
+        );
         const ckData = await ckRes.json();
         if (!ckRes.ok || ckData.error) throw new Error(ckData.message || 'ConvertKit submission failed');
 
