@@ -1,3 +1,14 @@
 [build]
   publish = "."
   functions = "netlify/functions"
+
+[[redirects]]
+  from = "/api/convertkit/*"
+  to = "https://api.convertkit.com/:splat"
+  status = 200
+  force = true
+  [redirects.headers]
+    Access-Control-Allow-Origin = "*"
+
+[functions]
+  node_bundler = "esbuild"
