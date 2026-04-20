@@ -558,28 +558,68 @@
   <div class="newsletter">
     <h2>Stay in the loop with DailyNoons</h2>
     <p>Get the week's best tech stories, AI updates, and Rob's take — straight to your inbox.</p>
-    <form
-      name="newsletter"
-      method="POST"
-      data-netlify="true"
-      netlify-honeypot="bot-field"
-      onsubmit="handleSubscribe(event)"
-    >
-      <input type="hidden" name="form-name" value="newsletter"/>
-      <p style="display:none"><input name="bot-field"/></p>
-      <div class="nl-form">
-        <input
-          type="email"
-          name="email"
-          placeholder="your@email.com"
-          id="emailInput"
-          required
-        />
-        <button type="submit" class="btn-primary">Join the Waitlist</button>
-      </div>
-      <div id="nl-message" style="margin-top:0.8rem;font-size:13px;min-height:20px;"></div>
-    </form>
+    <div id="kit-form-wrapper">
+      <script async data-uid="2a5901f981" src="https://dailynoons.kit.com/2a5901f981/index.js"></script>
+    </div>
   </div>
+
+  <style>
+    /* Kit form overrides to match DailyNoons branding */
+    #kit-form-wrapper form,
+    #kit-form-wrapper .formkit-form {
+      background: transparent !important;
+      border: none !important;
+      box-shadow: none !important;
+      padding: 0 !important;
+    }
+    #kit-form-wrapper .formkit-field input,
+    #kit-form-wrapper input[type="email"] {
+      background: #0d1e38 !important;
+      border: 1px solid #1a3a6e !important;
+      border-radius: 5px !important;
+      color: #ffffff !important;
+      font-size: 13px !important;
+      padding: 11px 18px !important;
+      width: 260px !important;
+      outline: none !important;
+    }
+    #kit-form-wrapper .formkit-field input::placeholder,
+    #kit-form-wrapper input[type="email"]::placeholder {
+      color: #3a5a6a !important;
+    }
+    #kit-form-wrapper .formkit-submit,
+    #kit-form-wrapper button[type="submit"] {
+      background: #00c4b4 !important;
+      color: #04342c !important;
+      font-weight: 700 !important;
+      font-size: 13px !important;
+      padding: 11px 28px !important;
+      border-radius: 5px !important;
+      border: none !important;
+      cursor: pointer !important;
+      letter-spacing: 0.5px !important;
+    }
+    #kit-form-wrapper .formkit-submit:hover,
+    #kit-form-wrapper button[type="submit"]:hover {
+      opacity: 0.9 !important;
+    }
+    #kit-form-wrapper .formkit-fields {
+      display: flex !important;
+      gap: 8px !important;
+      justify-content: center !important;
+      flex-wrap: wrap !important;
+    }
+    #kit-form-wrapper .formkit-alert,
+    #kit-form-wrapper .formkit-confirmation {
+      color: #00c4b4 !important;
+      font-size: 13px !important;
+      margin-top: 0.8rem !important;
+    }
+    #kit-form-wrapper p,
+    #kit-form-wrapper .formkit-guarantee {
+      display: none !important;
+    }
+  </style>
 
   <!-- FOOTER -->
   <footer>
