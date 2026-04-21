@@ -965,35 +965,13 @@
         </div>`;
 
       try {
-        const response = await fetch('https://api.anthropic.com/v1/messages', {
+        const response = await fetch('/.netlify/functions/news', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            model: 'claude-sonnet-4-20250514',
-            max_tokens: 1000,
-            tools: [{ type: 'web_search_20250305', name: 'web_search' }],
-            system: `You are a tech news curator for DailyNoons, a Technology & AI Trends channel. 
-Your job is to find and summarize the 6 most recent and important tech and AI news stories from today or this week.
-Return ONLY a valid JSON array with NO markdown, no backticks, no preamble. Just the raw JSON array.
-Each item must have: title (string), summary (string, 1-2 sentences), category (one of: AI, Machine Learning, Cybersecurity, Hardware, Startups, Cloud), source (string), time (string like "2 hours ago"), url (string or null).`,
-            messages: [{
-              role: 'user',
-              content: 'Search for the 6 most important AI and tech news stories from today or this week. Return as a JSON array only.'
-            }]
-          })
+          headers: { 'Content-Type': 'application/json' }
         });
-
         const data = await response.json();
-        const textContent = data.content
-          .filter(b => b.type === 'text')
-          .map(b => b.text)
-          .join('');
-
-        const clean = textContent.replace(/```json|```/g, '').trim();
-        const articles = JSON.parse(clean);
-
-        if (Array.isArray(articles) && articles.length > 0) {
-          renderNewsCards(articles);
+        if (data.articles && Array.isArray(data.articles) && data.articles.length > 0) {
+          renderNewsCards(data.articles);
         } else {
           renderNewsError();
         }
