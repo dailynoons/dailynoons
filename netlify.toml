@@ -7,3 +7,6 @@
 
 [functions."news-scheduler"]
   timeout = 30
+
+[functions."subscribe"]
+  timeout = 10
