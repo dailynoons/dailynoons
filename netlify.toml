@@ -4,3 +4,9 @@
 
 [functions]
   node_bundler = "esbuild"
+
+[functions."news"]
+  timeout = 30
+
+[functions]
+  node_bundler = "esbuild"
