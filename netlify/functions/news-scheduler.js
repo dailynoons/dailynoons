@@ -1,14 +1,13 @@
 // DailyNoons scheduled news pre-warmer
-// Runs every 2 hours to keep the cache fresh so visitors never wait
+// Runs every 2 hours to keep the news cache fresh
 
 const https = require('https');
 
-function fetchNews() {
+const handler = async function(event) {
+  console.log('Running scheduled news cache pre-warmer...');
+
   return new Promise((resolve) => {
-    const postData = JSON.stringify({
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' }
-    });
+    const body = JSON.stringify({});
 
     const options = {
       hostname: 'dailynoons.com',
@@ -16,7 +15,7 @@ function fetchNews() {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Content-Length': Buffer.byteLength(postData)
+        'Content-Length': Buffer.byteLength(body)
       }
     };
 
@@ -24,30 +23,27 @@ function fetchNews() {
       let data = '';
       res.on('data', chunk => { data += chunk; });
       res.on('end', () => {
-        console.log('Cache pre-warm response status:', res.statusCode);
-        console.log('Cache pre-warm response:', data.substring(0, 200));
-        resolve({ statusCode: res.statusCode });
+        console.log('Pre-warm status:', res.statusCode);
+        console.log('Pre-warm response:', data.substring(0, 200));
+        resolve({
+          statusCode: 200,
+          body: JSON.stringify({ success: true, status: res.statusCode })
+        });
       });
     });
 
     req.on('error', (e) => {
-      console.error('Cache pre-warm error:', e.message);
-      resolve({ error: e.message });
+      console.error('Pre-warm error:', e.message);
+      resolve({
+        statusCode: 500,
+        body: JSON.stringify({ error: e.message })
+      });
     });
 
-    req.write(postData);
+    req.write(body);
     req.end();
   });
-}
-
-exports.handler = async function(event) {
-  console.log('Running scheduled news cache pre-warmer...');
-  const result = await fetchNews();
-  console.log('Pre-warm complete:', JSON.stringify(result));
-  return { statusCode: 200, body: JSON.stringify({ success: true, result }) };
 };
 
-// Schedule: run every 2 hours
-module.exports.config = {
-  schedule: '0 */2 * * *'
-};
+module.exports = { handler };
+module.exports.config = { schedule: '0 */2 * * *' };
