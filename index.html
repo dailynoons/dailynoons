@@ -568,8 +568,9 @@
         <div>Fetching latest AI & tech news...</div>
       </div>
     </div>
-    <div style="text-align:center;margin-top:1.5rem;">
-      <button class="btn-secondary" id="news-refresh" onclick="loadNews()" style="font-size:12px;padding:8px 20px;display:none;">↻ Refresh News</button>
+    <div style="text-align:center;margin-top:1.5rem;display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;">
+      <button class="btn-secondary" id="news-refresh" onclick="tryRefreshNews()" style="font-size:12px;padding:8px 20px;display:none;">↻ Refresh News</button>
+      <span id="news-status" style="font-size:11px;color:#4a6a7a;"></span>
     </div>
   </div>
 
@@ -918,7 +919,11 @@
     }
 
     // ── AI NEWS FEED ─────────────────────────────────────────
+    const MAX_REFRESHES = 2;
     const NEWS_CATEGORIES = ['AI', 'Machine Learning', 'Cybersecurity', 'Hardware', 'Startups', 'Cloud'];
+
+    // Track refreshes per session
+    let sessionRefreshCount = parseInt(sessionStorage.getItem('newsRefreshCount') || '0');
 
     function getCategoryColor(cat) {
       const colors = {
@@ -929,8 +934,29 @@
       return colors[cat] || '#1a73e8';
     }
 
-    function renderNewsCards(articles) {
+    function updateRefreshBtn() {
+      const btn = document.getElementById('news-refresh');
+      const status = document.getElementById('news-status');
+      const remaining = MAX_REFRESHES - sessionRefreshCount;
+      if (remaining <= 0) {
+        btn.style.display = 'none';
+        status.textContent = 'Refresh limit reached for this session';
+      } else {
+        btn.style.display = 'inline-block';
+        btn.textContent = `↻ Refresh News (${remaining} left)`;
+      }
+    }
+
+    function tryRefreshNews() {
+      if (sessionRefreshCount >= MAX_REFRESHES) return;
+      sessionRefreshCount++;
+      sessionStorage.setItem('newsRefreshCount', sessionRefreshCount);
+      loadNews();
+    }
+
+    function renderNewsCards(articles, cached, ageMinutes) {
       const grid = document.getElementById('news-grid');
+      const status = document.getElementById('news-status');
       grid.innerHTML = articles.map(a => `
         <div class="news-card" onclick="window.open('${a.url || '#'}','_blank')">
           <div class="news-card-tag" style="color:${getCategoryColor(a.category)};border-color:${getCategoryColor(a.category)}22;">${a.category}</div>
@@ -944,7 +970,12 @@
             <span>${a.time || 'Today'}</span>
           </div>
         </div>`).join('');
-      document.getElementById('news-refresh').style.display = 'inline-block';
+      if (cached) {
+        status.textContent = ageMinutes < 1 ? 'Just updated' : `Updated ${ageMinutes}m ago · refreshes every 2 hours`;
+      } else {
+        status.textContent = 'Just fetched fresh headlines';
+      }
+      updateRefreshBtn();
     }
 
     function renderNewsError(msg) {
@@ -970,9 +1001,8 @@
           headers: { 'Content-Type': 'application/json' }
         });
         const data = await response.json();
-        console.log('News function response:', JSON.stringify(data));
         if (data.articles && Array.isArray(data.articles) && data.articles.length > 0) {
-          renderNewsCards(data.articles);
+          renderNewsCards(data.articles, data.cached, data.ageMinutes);
         } else if (data.error) {
           console.error('News error:', data.error, data.raw || '');
           renderNewsError(data.error);
