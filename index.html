@@ -947,10 +947,10 @@
       document.getElementById('news-refresh').style.display = 'inline-block';
     }
 
-    function renderNewsError() {
+    function renderNewsError(msg) {
       document.getElementById('news-grid').innerHTML = `
         <div style="grid-column:1/-1;text-align:center;padding:2rem;color:#4a6a7a;font-size:13px;">
-          Could not load news. <a href="#" onclick="loadNews();return false;" style="color:#4fc3f7;">Try again</a>
+          Could not load news${msg ? ': ' + msg : ''}. <a href="#" onclick="loadNews();return false;" style="color:#4fc3f7;">Try again</a>
         </div>`;
     }
 
@@ -970,14 +970,18 @@
           headers: { 'Content-Type': 'application/json' }
         });
         const data = await response.json();
+        console.log('News function response:', JSON.stringify(data));
         if (data.articles && Array.isArray(data.articles) && data.articles.length > 0) {
           renderNewsCards(data.articles);
+        } else if (data.error) {
+          console.error('News error:', data.error, data.raw || '');
+          renderNewsError(data.error);
         } else {
-          renderNewsError();
+          renderNewsError('No articles returned');
         }
       } catch (err) {
         console.error('News feed error:', err);
-        renderNewsError();
+        renderNewsError(err.message);
       }
     }
 
