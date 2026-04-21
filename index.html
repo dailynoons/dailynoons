@@ -557,6 +557,59 @@
     </div>
   </section>
 
+  <!-- AI NEWS FEED -->
+  <div class="section" id="news">
+    <div class="section-label">Powered by AI</div>
+    <div class="section-title">Latest in Tech & AI</div>
+    <div class="section-sub">Fresh headlines summarized by AI — updated every time you visit</div>
+    <div id="news-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;">
+      <div style="grid-column:1/-1;text-align:center;padding:2rem;color:#4a6a7a;font-size:13px;letter-spacing:1px;" id="news-loading">
+        <div id="news-spinner" style="display:inline-block;width:20px;height:20px;border:2px solid #1a3a6e;border-top-color:#00c4b4;border-radius:50%;animation:spin 0.8s linear infinite;margin-bottom:8px;"></div>
+        <div>Fetching latest AI & tech news...</div>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:1.5rem;">
+      <button class="btn-secondary" id="news-refresh" onclick="loadNews()" style="font-size:12px;padding:8px 20px;display:none;">↻ Refresh News</button>
+    </div>
+  </div>
+
+  <style>
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .news-card {
+      background: #0d1e38;
+      border: 1px solid #1a3a6e;
+      border-radius: 8px;
+      padding: 14px;
+      cursor: pointer;
+      transition: border-color 0.2s, transform 0.15s;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .news-card:hover { border-color: #1a73e8; transform: translateY(-2px); }
+    .news-card-tag {
+      font-size: 9px; letter-spacing: 2px;
+      color: #1a73e8; text-transform: uppercase;
+      background: #0a1628; padding: 2px 6px;
+      border-radius: 2px; border: 1px solid #1a3a6e;
+      display: inline-block; width: fit-content;
+    }
+    .news-card-title {
+      font-size: 13px; font-weight: 600;
+      color: #d0e8f5; line-height: 1.4;
+    }
+    .news-card-summary {
+      font-size: 12px; color: #6a8fa0;
+      line-height: 1.6; flex: 1;
+    }
+    .news-card-footer {
+      font-size: 11px; color: #4a6a7a;
+      display: flex; justify-content: space-between;
+      align-items: center; margin-top: 4px;
+    }
+    .news-card-dot { width: 6px; height: 6px; border-radius: 50%; background: #00c4b4; }
+  </style>
+
   <!-- NEWSLETTER -->
   <div class="newsletter">
     <h2>Stay in the loop with DailyNoons</h2>
@@ -864,8 +917,96 @@
       }
     }
 
-    // Load videos on page load
+    // ── AI NEWS FEED ─────────────────────────────────────────
+    const NEWS_CATEGORIES = ['AI', 'Machine Learning', 'Cybersecurity', 'Hardware', 'Startups', 'Cloud'];
+
+    function getCategoryColor(cat) {
+      const colors = {
+        'AI': '#1a73e8', 'Machine Learning': '#7c3aed',
+        'Cybersecurity': '#e24b4a', 'Hardware': '#00c4b4',
+        'Startups': '#f59e0b', 'Cloud': '#10b981'
+      };
+      return colors[cat] || '#1a73e8';
+    }
+
+    function renderNewsCards(articles) {
+      const grid = document.getElementById('news-grid');
+      grid.innerHTML = articles.map(a => `
+        <div class="news-card" onclick="window.open('${a.url || '#'}','_blank')">
+          <div class="news-card-tag" style="color:${getCategoryColor(a.category)};border-color:${getCategoryColor(a.category)}22;">${a.category}</div>
+          <div class="news-card-title">${a.title}</div>
+          <div class="news-card-summary">${a.summary}</div>
+          <div class="news-card-footer">
+            <div style="display:flex;align-items:center;gap:6px;">
+              <div class="news-card-dot"></div>
+              <span>${a.source || 'Tech News'}</span>
+            </div>
+            <span>${a.time || 'Today'}</span>
+          </div>
+        </div>`).join('');
+      document.getElementById('news-refresh').style.display = 'inline-block';
+    }
+
+    function renderNewsError() {
+      document.getElementById('news-grid').innerHTML = `
+        <div style="grid-column:1/-1;text-align:center;padding:2rem;color:#4a6a7a;font-size:13px;">
+          Could not load news. <a href="#" onclick="loadNews();return false;" style="color:#4fc3f7;">Try again</a>
+        </div>`;
+    }
+
+    async function loadNews() {
+      const grid = document.getElementById('news-grid');
+      const refreshBtn = document.getElementById('news-refresh');
+      refreshBtn.style.display = 'none';
+      grid.innerHTML = `
+        <div style="grid-column:1/-1;text-align:center;padding:2rem;color:#4a6a7a;font-size:13px;">
+          <div style="display:inline-block;width:20px;height:20px;border:2px solid #1a3a6e;border-top-color:#00c4b4;border-radius:50%;animation:spin 0.8s linear infinite;margin-bottom:8px;"></div>
+          <div>Fetching latest AI & tech news...</div>
+        </div>`;
+
+      try {
+        const response = await fetch('https://api.anthropic.com/v1/messages', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            model: 'claude-sonnet-4-20250514',
+            max_tokens: 1000,
+            tools: [{ type: 'web_search_20250305', name: 'web_search' }],
+            system: `You are a tech news curator for DailyNoons, a Technology & AI Trends channel. 
+Your job is to find and summarize the 6 most recent and important tech and AI news stories from today or this week.
+Return ONLY a valid JSON array with NO markdown, no backticks, no preamble. Just the raw JSON array.
+Each item must have: title (string), summary (string, 1-2 sentences), category (one of: AI, Machine Learning, Cybersecurity, Hardware, Startups, Cloud), source (string), time (string like "2 hours ago"), url (string or null).`,
+            messages: [{
+              role: 'user',
+              content: 'Search for the 6 most important AI and tech news stories from today or this week. Return as a JSON array only.'
+            }]
+          })
+        });
+
+        const data = await response.json();
+        const textContent = data.content
+          .filter(b => b.type === 'text')
+          .map(b => b.text)
+          .join('');
+
+        const clean = textContent.replace(/```json|```/g, '').trim();
+        const articles = JSON.parse(clean);
+
+        if (Array.isArray(articles) && articles.length > 0) {
+          renderNewsCards(articles);
+        } else {
+          renderNewsError();
+        }
+      } catch (err) {
+        console.error('News feed error:', err);
+        renderNewsError();
+      }
+    }
+
+    // Load news on page load
     fetchVideos();
+    loadNews();
+    // ─────────────────────────────────────────────────────────
   </script>
 </body>
 </html>
