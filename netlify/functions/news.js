@@ -1,4 +1,14 @@
+// DailyNoons news function
 const https = require('https');
+
+// In-memory cache (persists between warm function invocations)
+let newsCache = null;
+let cacheTimestamp = null;
+const CACHE_DURATION_MS = 2 * 60 * 60 * 1000; // 2 hours
+
+function isCacheValid() {
+  return newsCache && cacheTimestamp && (Date.now() - cacheTimestamp < CACHE_DURATION_MS);
+}
 
 exports.handler = async function(event, context) {
   const headers = {
@@ -14,6 +24,16 @@ exports.handler = async function(event, context) {
 
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, headers, body: JSON.stringify({ error: 'Method not allowed' }) };
+  }
+
+  // Return cached news if still valid
+  if (isCacheValid()) {
+    const ageMinutes = Math.floor((Date.now() - cacheTimestamp) / 60000);
+    return {
+      statusCode: 200,
+      headers,
+      body: JSON.stringify({ articles: newsCache, cached: true, ageMinutes })
+    };
   }
 
   const postData = JSON.stringify({
@@ -50,7 +70,6 @@ Each item must have: title (string), summary (string, 1-2 sentences), category (
         try {
           const parsed = JSON.parse(data);
 
-          // Handle API errors
           if (parsed.error) {
             resolve({
               statusCode: 500,
@@ -69,12 +88,11 @@ Each item must have: title (string), summary (string, 1-2 sentences), category (
             resolve({
               statusCode: 500,
               headers,
-              body: JSON.stringify({ error: 'No text content in response', raw: JSON.stringify(parsed).substring(0, 300) })
+              body: JSON.stringify({ error: 'No text content in response' })
             });
             return;
           }
 
-          // Try to extract JSON array from response
           const jsonMatch = textContent.match(/\[[\s\S]*\]/);
           if (!jsonMatch) {
             resolve({
@@ -86,10 +104,15 @@ Each item must have: title (string), summary (string, 1-2 sentences), category (
           }
 
           const articles = JSON.parse(jsonMatch[0]);
+
+          // Store in cache
+          newsCache = articles;
+          cacheTimestamp = Date.now();
+
           resolve({
             statusCode: 200,
             headers,
-            body: JSON.stringify({ articles })
+            body: JSON.stringify({ articles, cached: false, ageMinutes: 0 })
           });
         } catch (e) {
           resolve({
