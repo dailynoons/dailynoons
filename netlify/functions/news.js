@@ -1,4 +1,3 @@
-
 const https = require('https');
 
 exports.handler = async function(event, context) {
@@ -50,12 +49,43 @@ Each item must have: title (string), summary (string, 1-2 sentences), category (
       res.on('end', () => {
         try {
           const parsed = JSON.parse(data);
+
+          // Handle API errors
+          if (parsed.error) {
+            resolve({
+              statusCode: 500,
+              headers,
+              body: JSON.stringify({ error: parsed.error.message || 'Anthropic API error' })
+            });
+            return;
+          }
+
           const textContent = (parsed.content || [])
             .filter(b => b.type === 'text')
             .map(b => b.text)
             .join('');
-          const clean = textContent.replace(/```json|```/g, '').trim();
-          const articles = JSON.parse(clean);
+
+          if (!textContent) {
+            resolve({
+              statusCode: 500,
+              headers,
+              body: JSON.stringify({ error: 'No text content in response', raw: JSON.stringify(parsed).substring(0, 300) })
+            });
+            return;
+          }
+
+          // Try to extract JSON array from response
+          const jsonMatch = textContent.match(/\[[\s\S]*\]/);
+          if (!jsonMatch) {
+            resolve({
+              statusCode: 500,
+              headers,
+              body: JSON.stringify({ error: 'No JSON array found', raw: textContent.substring(0, 300) })
+            });
+            return;
+          }
+
+          const articles = JSON.parse(jsonMatch[0]);
           resolve({
             statusCode: 200,
             headers,
@@ -65,7 +95,7 @@ Each item must have: title (string), summary (string, 1-2 sentences), category (
           resolve({
             statusCode: 500,
             headers,
-            body: JSON.stringify({ error: 'Failed to parse response', raw: data.substring(0, 200) })
+            body: JSON.stringify({ error: 'Parse error: ' + e.message, raw: data.substring(0, 300) })
           });
         }
       });
