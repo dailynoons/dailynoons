@@ -8,5 +8,8 @@
 [functions."news"]
   timeout = 30
 
+[functions."news-scheduler"]
+  timeout = 30
+
 [functions]
   node_bundler = "esbuild"
