@@ -932,33 +932,48 @@
     async function loadRundownFeed() {
       const grid = document.getElementById('rundown-grid');
       try {
-        const url = 'https://api.rss2json.com/v1/api.json?rss_url=' +
-          encodeURIComponent('https://rss.beehiiv.com/feeds/2R3C6Bt5wj.xml') + '&count=6';
-        const res  = await fetch(url);
+        // Use allorigins.win as a reliable CORS proxy to fetch the RSS feed
+        const proxyUrl = 'https://api.allorigins.win/get?url=' +
+          encodeURIComponent('https://rss.beehiiv.com/feeds/2R3C6Bt5wj.xml');
+        const res  = await fetch(proxyUrl);
         const data = await res.json();
-        if (data.status === 'ok' && data.items && data.items.length > 0) {
-          grid.innerHTML = data.items.map(item => {
-            const thumb = item.thumbnail || item.enclosure?.link || '';
-            const date  = new Date(item.pubDate);
-            const ago   = timeAgo(item.pubDate);
-            return `
-              <div class="news-card" onclick="window.open('${item.link}','_blank')">
-                ${thumb ? `<img src="${thumb}" alt="" style="width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:4px;margin-bottom:4px;">` : ''}
-                <div class="news-card-tag">The Rundown AI</div>
-                <div class="news-card-title">${item.title}</div>
-                <div class="news-card-source">
-                  <div class="news-card-dot"></div>
-                  <span>therundown.ai</span>
-                  <span style="margin-left:auto">${ago}</span>
-                </div>
-              </div>`;
-          }).join('');
-        } else {
-          grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:2rem;color:#4a6a7a;font-size:13px;">Could not load feed. <a href="https://www.therundown.ai" target="_blank" style="color:#4fc3f7;">Visit therundown.ai →</a></div>`;
+
+        // Parse the XML string
+        const parser = new DOMParser();
+        const xml    = parser.parseFromString(data.contents, 'text/xml');
+        const items  = Array.from(xml.querySelectorAll('item')).slice(0, 6);
+
+        if (items.length === 0) {
+          throw new Error('No items found');
         }
+
+        grid.innerHTML = items.map(item => {
+          const title   = item.querySelector('title')?.textContent || '';
+          const link    = item.querySelector('link')?.textContent || '#';
+          const pubDate = item.querySelector('pubDate')?.textContent || '';
+          const ago     = pubDate ? timeAgo(pubDate) : 'Recently';
+          // Try to get thumbnail from media:content or enclosure
+          const media   = item.querySelector('content')?.getAttribute('url') ||
+                          item.querySelector('enclosure')?.getAttribute('url') || '';
+          return `
+            <div class="news-card" onclick="window.open('${link}','_blank')">
+              ${media ? `<img src="${media}" alt="" style="width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:4px;margin-bottom:4px;">` : ''}
+              <div class="news-card-tag">The Rundown AI</div>
+              <div class="news-card-title">${title}</div>
+              <div class="news-card-source">
+                <div class="news-card-dot"></div>
+                <span>therundown.ai</span>
+                <span style="margin-left:auto">${ago}</span>
+              </div>
+            </div>`;
+        }).join('');
+
       } catch (err) {
         console.error('Rundown feed error:', err);
-        grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:2rem;color:#4a6a7a;font-size:13px;"><a href="https://www.therundown.ai" target="_blank" style="color:#4fc3f7;">Visit therundown.ai →</a></div>`;
+        grid.innerHTML = `
+          <div style="grid-column:1/-1;text-align:center;padding:2rem;color:#4a6a7a;font-size:13px;">
+            Could not load feed. <a href="https://www.therundown.ai" target="_blank" style="color:#4fc3f7;">Visit therundown.ai →</a>
+          </div>`;
       }
     }
     // ─────────────────────────────────────────────────────────
