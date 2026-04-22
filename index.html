@@ -710,69 +710,31 @@
         const proxyUrl = 'https://api.allorigins.win/get?url=' + encodeURIComponent(feedUrl);
         const res      = await fetch(proxyUrl);
         const json     = await res.json();
-
         if (!json.contents) throw new Error('No contents');
-
         const parser = new DOMParser();
         const xml    = parser.parseFromString(json.contents, 'application/xml');
         const items  = Array.from(xml.querySelectorAll('item')).slice(0, 6);
-
         if (items.length === 0) throw new Error('No items');
-
-        grid.innerHTML = items.map(item => {
-          const title   = item.querySelector('title')?.textContent?.trim() || 'Untitled';
-          const pubDate = item.querySelector('pubDate')?.textContent || '';
-          const ago     = pubDate ? timeAgo(pubDate) : 'Recently';
-          const guid    = item.querySelector('guid')?.textContent?.trim() || '';
-          const link    = guid.startsWith('http') ? guid : 'https://www.therundown.ai';
-          return \`
-            <div class="news-card" onclick="window.open('\${link}','_blank')">
-              <div class="news-card-tag" style="color:#f59e0b;border-color:#f59e0b33;">The Rundown AI</div>
-              <div class="news-card-title">\${title}</div>
-              <div class="news-card-source">
-                <div class="news-card-dot"></div>
-                <span>therundown.ai</span>
-                <span style="margin-left:auto">\${ago}</span>
-              </div>
-            </div>\`;
+        grid.innerHTML = items.map(function(item) {
+          var title   = item.querySelector('title') ? item.querySelector('title').textContent.trim() : 'Untitled';
+          var pubDate = item.querySelector('pubDate') ? item.querySelector('pubDate').textContent : '';
+          var ago     = pubDate ? timeAgo(pubDate) : 'Recently';
+          var guid    = item.querySelector('guid') ? item.querySelector('guid').textContent.trim() : '';
+          var link    = guid.indexOf('http') === 0 ? guid : 'https://www.therundown.ai';
+          var card = document.createElement('div');
+          card.className = 'news-card';
+          card.style.cursor = 'pointer';
+          card.addEventListener('click', function() { window.open(link, '_blank'); });
+          card.innerHTML = '<div class="news-card-tag" style="color:#f59e0b;border-color:#f59e0b33;">The Rundown AI</div>'
+            + '<div class="news-card-title">' + title + '</div>'
+            + '<div class="news-card-source"><div class="news-card-dot"></div>'
+            + '<span>therundown.ai</span>'
+            + '<span style="margin-left:auto">' + ago + '</span></div>';
+          return card.outerHTML;
         }).join('');
-
       } catch (err) {
         console.error('Rundown feed error:', err);
-        grid.innerHTML = \`
-          <div style="grid-column:1/-1;text-align:center;padding:2rem;color:#4a6a7a;font-size:13px;">
-            Could not load feed. <a href="https://www.therundown.ai" target="_blank" style="color:#4fc3f7;">Visit therundown.ai →</a>
-          </div>\`;
-      }
-    }
-
-        grid.innerHTML = items.map(item => {
-          const title   = item.querySelector('title')?.textContent || '';
-          const link    = item.querySelector('link')?.textContent || '#';
-          const pubDate = item.querySelector('pubDate')?.textContent || '';
-          const ago     = pubDate ? timeAgo(pubDate) : 'Recently';
-          // Try to get thumbnail from media:content or enclosure
-          const media   = item.querySelector('content')?.getAttribute('url') ||
-                          item.querySelector('enclosure')?.getAttribute('url') || '';
-          return `
-            <div class="news-card" onclick="window.open('${link}','_blank')">
-              ${media ? `<img src="${media}" alt="" style="width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:4px;margin-bottom:4px;">` : ''}
-              <div class="news-card-tag">The Rundown AI</div>
-              <div class="news-card-title">${title}</div>
-              <div class="news-card-source">
-                <div class="news-card-dot"></div>
-                <span>therundown.ai</span>
-                <span style="margin-left:auto">${ago}</span>
-              </div>
-            </div>`;
-        }).join('');
-
-      } catch (err) {
-        console.error('Rundown feed error:', err);
-        grid.innerHTML = `
-          <div style="grid-column:1/-1;text-align:center;padding:2rem;color:#4a6a7a;font-size:13px;">
-            Could not load feed. <a href="https://www.therundown.ai" target="_blank" style="color:#4fc3f7;">Visit therundown.ai →</a>
-          </div>`;
+        grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:2rem;color:#4a6a7a;font-size:13px;">Could not load feed. <a href="https://www.therundown.ai" target="_blank" style="color:#4fc3f7;">Visit therundown.ai</a></div>';
       }
     }
     // ─────────────────────────────────────────────────────────
