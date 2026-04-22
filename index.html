@@ -914,12 +914,7 @@
     }
 
     // ── RSS NEWS FEED ─────────────────────────────────────────
-    const RSS_FEEDS = [
-      'https://news.google.com/rss/search?q=artificial+intelligence&hl=en-US&gl=US&ceid=US:en',
-      'https://news.google.com/rss/search?q=technology+AI&hl=en-US&gl=US&ceid=US:en'
-    ];
-    const RSS_PROXY = 'https://api.rss2json.com/v1/api.json?rss_url=';
-    const MAX_NEWS  = 6;
+    const MAX_NEWS = 6;
 
     function timeAgoFromDate(dateStr) {
       const diff = Math.floor((Date.now() - new Date(dateStr)) / 1000);
@@ -968,12 +963,13 @@
           <div>Loading latest tech news...</div>
         </div>`;
       try {
-        const url = RSS_PROXY + encodeURIComponent(RSS_FEEDS[0]) + '&count=6';
-        const res  = await fetch(url);
+        const res  = await fetch('/.netlify/functions/rss');
         const data = await res.json();
-        if (data.status === 'ok' && data.items && data.items.length > 0) {
+        console.log('RSS response:', JSON.stringify(data).substring(0, 200));
+        if (data.items && data.items.length > 0) {
           renderRssCards(data.items);
         } else {
+          console.error('RSS error:', data.error || 'No items');
           renderRssError();
         }
       } catch (err) {
@@ -982,6 +978,10 @@
       }
     }
     // ─────────────────────────────────────────────────────────
+
+    // Initialise on page load
+    fetchVideos();
+    loadNews();
   </script>
 </body>
 </html>
