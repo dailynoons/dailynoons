@@ -1,11 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>DailyNoons — Technology & AI Trends by Rob Nuno</title>
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%230a1628'/><polygon points='16,3 27,9 27,23 16,29 5,23 5,9' fill='%230a1628' stroke='%231565c0' stroke-width='1.5'/><polygon points='16,6 24,11 24,21 16,26 8,21 8,11' fill='none' stroke='%235b21b6' stroke-width='0.8' opacity='0.8'/><path d='M10 11 L7 11 L7 21 L10 21' fill='none' stroke='%2300c4b4' stroke-width='1.8' stroke-linecap='round'/><path d='M22 11 L25 11 L25 21 L22 21' fill='none' stroke='%2300c4b4' stroke-width='1.8' stroke-linecap='round'/><text x='16' y='20' text-anchor='middle' font-family='sans-serif' font-size='9' font-weight='700' fill='%234fc3f7'>DN</text></svg>"/>
   <meta name="description" content="Tech insights, AI trends, and the stories shaping the future — explored and explained by Rob Nuno."/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -499,9 +497,7 @@
 
   <!-- ABOUT STRIP -->
   <div class="about-strip" id="about">
-    <div class="about-avatar" style="padding:0;overflow:hidden;border:2px solid #1a73e8;">
-      <img src="rob-nuno.jpg" alt="Rob Nuno" style="width:100%;height:100%;object-fit:cover;border-radius:50%;display:block;"/>
-    </div>
+    <div class="about-avatar">RN</div>
     <div class="about-text">
       <h3>Hey, I'm Rob Nuno — aka "Noons"</h3>
       <p>Tech enthusiast, AI explorer, and your guide to what's happening at the edge of innovation. DailyNoons is where Rob breaks down complex tech into clear, compelling stories — no fluff, just signal.</p>
@@ -558,143 +554,39 @@
     </div>
   </section>
 
-  <!-- RSS NEWS FEED -->
-  <div class="section" id="news">
-    <div class="section-label">Latest Headlines</div>
-    <div class="section-title">Latest in Tech & AI</div>
-    <div class="section-sub">Fresh headlines from across the web — updated automatically</div>
-    <div id="news-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;">
-      <div style="grid-column:1/-1;text-align:center;padding:2rem;color:#4a6a7a;font-size:13px;">
-        <div style="display:inline-block;width:20px;height:20px;border:2px solid #1a3a6e;border-top-color:#00c4b4;border-radius:50%;animation:spin 0.8s linear infinite;margin-bottom:8px;"></div>
-        <div>Loading latest tech news...</div>
-      </div>
-    </div>
-    <div style="text-align:center;margin-top:1.5rem;">
-      <span id="news-status" style="font-size:11px;color:#4a6a7a;"></span>
-    </div>
-  </div>
-
-  <style>
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .news-card {
-      background: #0d1e38;
-      border: 1px solid #1a3a6e;
-      border-radius: 8px;
-      padding: 14px;
-      cursor: pointer;
-      transition: border-color 0.2s, transform 0.15s;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-    .news-card:hover { border-color: #1a73e8; transform: translateY(-2px); }
-    .news-card-tag {
-      font-size: 9px; letter-spacing: 2px;
-      color: #1a73e8; text-transform: uppercase;
-      background: #0a1628; padding: 2px 6px;
-      border-radius: 2px; border: 1px solid #1a3a6e;
-      display: inline-block; width: fit-content;
-    }
-    .news-card-title {
-      font-size: 13px; font-weight: 600;
-      color: #d0e8f5; line-height: 1.4;
-    }
-    .news-card-source {
-      font-size: 11px; color: #4a6a7a;
-      display: flex; align-items: center; gap: 6px;
-      margin-top: auto;
-    }
-    .news-card-dot { width: 6px; height: 6px; border-radius: 50%; background: #00c4b4; flex-shrink: 0; }
-  </style>
-
-  <!-- RUNDOWN AI FEED -->
-  <div class="section" id="xfeed" style="padding-bottom:0;">
-    <div class="section-label">Featured Newsletter</div>
-    <div class="section-title">The Rundown AI</div>
-    <div class="section-sub">Latest editions from <a href="https://www.therundown.ai" target="_blank" style="color:#4fc3f7;text-decoration:none;">therundown.ai</a> — the #1 AI newsletter with 2M+ readers</div>
-    <div id="rundown-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;">
-      <div style="grid-column:1/-1;text-align:center;padding:2rem;color:#4a6a7a;font-size:13px;">
-        <div style="display:inline-block;width:20px;height:20px;border:2px solid #1a3a6e;border-top-color:#00c4b4;border-radius:50%;animation:spin 0.8s linear infinite;margin-bottom:8px;"></div>
-        <div>Loading latest editions...</div>
-      </div>
-    </div>
-    <div style="text-align:center;margin-top:1.5rem;">
-      <a href="https://www.therundown.ai" target="_blank" class="btn-secondary" style="font-size:12px;padding:8px 20px;">View All Editions →</a>
-    </div>
-  </div>
   <!-- NEWSLETTER -->
   <div class="newsletter">
     <h2>Stay in the loop with DailyNoons</h2>
     <p>Get the week's best tech stories, AI updates, and Rob's take — straight to your inbox.</p>
-    <div id="kit-form-wrapper">
-      <script async data-uid="2a5901f981" src="https://dailynoons.kit.com/2a5901f981/index.js"></script>
-    </div>
+    <form
+      name="newsletter"
+      method="POST"
+      data-netlify="true"
+      netlify-honeypot="bot-field"
+      onsubmit="handleSubscribe(event)"
+    >
+      <input type="hidden" name="form-name" value="newsletter"/>
+      <p style="display:none"><input name="bot-field"/></p>
+      <div class="nl-form">
+        <input
+          type="email"
+          name="email"
+          placeholder="your@email.com"
+          id="emailInput"
+          required
+        />
+        <button type="submit" class="btn-primary">Join the Waitlist</button>
+      </div>
+      <div id="nl-message" style="margin-top:0.8rem;font-size:13px;min-height:20px;"></div>
+    </form>
   </div>
-
-  <style>
-    /* Kit form overrides to match DailyNoons branding */
-    #kit-form-wrapper form,
-    #kit-form-wrapper .formkit-form {
-      background: transparent !important;
-      border: none !important;
-      box-shadow: none !important;
-      padding: 0 !important;
-    }
-    #kit-form-wrapper .formkit-field input,
-    #kit-form-wrapper input[type="email"] {
-      background: #0d1e38 !important;
-      border: 1px solid #1a3a6e !important;
-      border-radius: 5px !important;
-      color: #ffffff !important;
-      font-size: 13px !important;
-      padding: 11px 18px !important;
-      width: 260px !important;
-      outline: none !important;
-    }
-    #kit-form-wrapper .formkit-field input::placeholder,
-    #kit-form-wrapper input[type="email"]::placeholder {
-      color: #3a5a6a !important;
-    }
-    #kit-form-wrapper .formkit-submit,
-    #kit-form-wrapper button[type="submit"] {
-      background: #00c4b4 !important;
-      color: #04342c !important;
-      font-weight: 700 !important;
-      font-size: 13px !important;
-      padding: 11px 28px !important;
-      border-radius: 5px !important;
-      border: none !important;
-      cursor: pointer !important;
-      letter-spacing: 0.5px !important;
-    }
-    #kit-form-wrapper .formkit-submit:hover,
-    #kit-form-wrapper button[type="submit"]:hover {
-      opacity: 0.9 !important;
-    }
-    #kit-form-wrapper .formkit-fields {
-      display: flex !important;
-      gap: 8px !important;
-      justify-content: center !important;
-      flex-wrap: wrap !important;
-    }
-    #kit-form-wrapper .formkit-alert,
-    #kit-form-wrapper .formkit-confirmation {
-      color: #00c4b4 !important;
-      font-size: 13px !important;
-      margin-top: 0.8rem !important;
-    }
-    #kit-form-wrapper p,
-    #kit-form-wrapper .formkit-guarantee {
-      display: none !important;
-    }
-  </style>
 
   <!-- FOOTER -->
   <footer>
     <div class="footer-name"><span class="teal">Daily</span><span class="white">Noons</span></div>
     <div class="footer-links">
-      <a href="https://www.youtube.com/@DailyNoons" target="_blank">YouTube</a>
-      <a href="https://x.com/DailyNoonsX" target="_blank">Twitter / X</a>
+      <a href="https://youtube.com" target="_blank">YouTube</a>
+      <a href="https://twitter.com" target="_blank">Twitter / X</a>
       <a href="#newsletter">Newsletter</a>
       <a href="mailto:hello@dailynoons.com">Contact</a>
     </div>
@@ -702,18 +594,80 @@
   </footer>
 
   <script>
-    // CONFIG
-    const YT_API_KEY = 'AIzaSyAe_LSSQlQQELKRv49Oe5Xk8xmLBBOk5EA';
-    const MAX_VIDEOS = 6;
-    const CK_FORM_ID = '9345204';
-    const CK_API_KEY = 'nPCgk1H25OzLoaiNe8waNQ';
+    // ── CONFIG ──────────────────────────────────────────────
+    const YT_API_KEY      = 'AIzaSyAe_LSSQlQQELKRv49Oe5Xk8xmLBBOk5EA';
+    const YT_CHANNEL_ID   = 'UCDailyNoons'; // resolved via handle below
+    const YT_CHANNEL_HANDLE = '@DailyNoons';
+    const MAX_VIDEOS        = 6;
+    const CK_FORM_ID        = '9345204';
+    const CK_API_KEY        = 'nPCgk1H25OzLoaiNe8waNQ';
+    // ────────────────────────────────────────────────────────
 
     // Mobile nav toggle
     const toggle = document.getElementById('mobileToggle');
     const navLinks = document.getElementById('navLinks');
     toggle.addEventListener('click', () => navLinks.classList.toggle('open'));
 
-    // Smooth scroll
+    // Newsletter — submit to Netlify Forms + ConvertKit
+    async function handleSubscribe(e) {
+      e.preventDefault();
+      const input   = document.getElementById('emailInput');
+      const message = document.getElementById('nl-message');
+      const email   = input.value.trim();
+
+      if (!email || !email.includes('@')) {
+        input.style.borderColor = '#e24b4a';
+        message.style.color = '#e24b4a';
+        message.textContent = 'Please enter a valid email address.';
+        input.focus();
+        return;
+      }
+
+      const btn = e.target.querySelector('button[type="submit"]');
+      btn.disabled = true;
+      btn.textContent = 'Subscribing...';
+
+      try {
+        // Submit to Netlify Forms (captures in Netlify dashboard)
+        const formData = new FormData();
+        formData.append('form-name', 'newsletter');
+        formData.append('email', email);
+        const netlifyRes = await fetch('/', { method: 'POST', body: formData });
+        if (!netlifyRes.ok) throw new Error('Netlify submission failed');
+
+        // Submit to ConvertKit via Netlify Function (avoids CORS issues)
+        const ckRes = await fetch('/.netlify/functions/subscribe', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email })
+        });
+        const ckData = await ckRes.json();
+        if (!ckRes.ok || ckData.error) throw new Error(ckData.message || 'ConvertKit submission failed');
+
+        // Success
+        input.style.borderColor = '#00c4b4';
+        input.value = '';
+        input.placeholder = 'your@email.com';
+        message.style.color = '#00c4b4';
+        message.textContent = "✓ You're on the waitlist! Welcome to DailyNoons.";
+        btn.textContent = 'Joined!';
+        setTimeout(() => {
+          message.textContent = '';
+          input.style.borderColor = '';
+          btn.disabled = false;
+          btn.textContent = 'Join the Waitlist';
+        }, 5000);
+
+      } catch (err) {
+        console.error('Subscription error:', err);
+        message.style.color = '#e24b4a';
+        message.textContent = 'Something went wrong. Please try again.';
+        btn.disabled = false;
+        btn.textContent = 'Join the Waitlist';
+      }
+    }
+
+    // Smooth scroll for anchor links
     document.querySelectorAll('a[href^="#"]').forEach(a => {
       a.addEventListener('click', e => {
         const target = document.querySelector(a.getAttribute('href'));
@@ -721,14 +675,15 @@
       });
     });
 
-    // Utility: time ago
+    // ── YOUTUBE API ──────────────────────────────────────────
+
     function timeAgo(dateStr) {
       const diff = Math.floor((Date.now() - new Date(dateStr)) / 1000);
-      if (diff < 3600)    return Math.floor(diff / 60) + 'm ago';
-      if (diff < 86400)   return Math.floor(diff / 3600) + 'h ago';
-      if (diff < 604800)  return Math.floor(diff / 86400) + 'd ago';
-      if (diff < 2592000) return Math.floor(diff / 604800) + 'w ago';
-      return Math.floor(diff / 2592000) + 'mo ago';
+      if (diff < 3600)   return Math.floor(diff / 60) + ' minutes ago';
+      if (diff < 86400)  return Math.floor(diff / 3600) + ' hours ago';
+      if (diff < 604800) return Math.floor(diff / 86400) + ' days ago';
+      if (diff < 2592000) return Math.floor(diff / 604800) + ' weeks ago';
+      return Math.floor(diff / 2592000) + ' months ago';
     }
 
     function formatViews(n) {
@@ -738,7 +693,7 @@
       return n.toString();
     }
 
-    // Topic detection
+    // Keyword-based topic detection from video title
     function detectTopic(title) {
       const t = title.toLowerCase();
       if (/\b(ai|artificial intelligence|chatgpt|gpt|llm|machine learning|claude|gemini|copilot|openai|deepmind|neural|muse spark)\b/.test(t)) return 'ai';
@@ -749,7 +704,7 @@
       return 'all';
     }
 
-    // Filter chips — called after video cards render
+    // Wire up topic filter chips (called after cards are rendered)
     function initFilters() {
       document.querySelectorAll('.topic-chip').forEach(chip => {
         chip.addEventListener('click', () => {
@@ -757,137 +712,117 @@
           chip.classList.add('active');
           const topic = chip.dataset.topic;
           document.querySelectorAll('.video-card').forEach(card => {
-            card.style.display = (topic === 'all' || card.dataset.topic === topic) ? '' : 'none';
+            const match = topic === 'all' || card.dataset.topic === topic;
+            card.style.display = match ? '' : 'none';
           });
         });
       });
     }
 
-    // Video card renderer
     function renderVideoCard(video, stats) {
-      const vid   = video.id.videoId;
-      const title = video.snippet.title;
-      const thumb = video.snippet.thumbnails.medium.url;
-      const date  = video.snippet.publishedAt;
-      const views = stats ? formatViews(stats.viewCount) + ' views' : '';
-      const ago   = timeAgo(date);
-      const topic = detectTopic(title);
-      return '<div class="video-card" data-topic="' + topic + '" onclick="window.open('https://www.youtube.com/watch?v=' + vid + '','_blank')">'
-        + '<div class="video-thumb">'
-        + '<img src="' + thumb + '" alt="' + title.replace(/"/g, '&quot;') + '" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:0;">'
-        + '<div class="play-btn" style="position:relative;z-index:1;"><svg viewBox="0 0 10 10"><polygon points="2,1 9,5 2,9" fill="#fff"/></svg></div>'
-        + '</div>'
-        + '<div class="video-info">'
-        + '<div class="video-title">' + title + '</div>'
-        + '<div class="video-meta">' + (views ? '<span>' + views + '</span>' : '') + '<span>' + ago + '</span></div>'
-        + '</div></div>';
+      const vid     = video.id.videoId;
+      const title   = video.snippet.title;
+      const thumb   = video.snippet.thumbnails.medium.url;
+      const date    = video.snippet.publishedAt;
+      const views   = stats ? formatViews(stats.viewCount) + ' views' : '';
+      const ago     = timeAgo(date);
+      const topic   = detectTopic(title);
+
+      return `
+        <div class="video-card" data-topic="${topic}" onclick="window.open('https://www.youtube.com/watch?v=${vid}','_blank')">
+          <div class="video-thumb">
+            <img src="${thumb}" alt="${title.replace(/"/g,'&quot;')}"
+              style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:0;">
+            <div class="play-btn" style="position:relative;z-index:1;">
+              <svg viewBox="0 0 10 10"><polygon points="2,1 9,5 2,9"/></svg>
+            </div>
+          </div>
+          <div class="video-info">
+            <div class="video-title">${title}</div>
+            <div class="video-meta">
+              ${views ? `<span>${views}</span>` : ''}
+              <span>${ago}</span>
+            </div>
+          </div>
+        </div>`;
     }
 
     function renderError(msg) {
-      document.getElementById('videoGrid').innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:2rem;color:#4a6a7a;font-size:13px;">' + msg + '</div>';
+      document.getElementById('videoGrid').innerHTML =
+        `<div style="grid-column:1/-1;text-align:center;padding:2rem;color:#4a6a7a;font-size:13px;">${msg}</div>`;
     }
 
-    // YouTube video fetch
     async function fetchVideos() {
       const grid = document.getElementById('videoGrid');
       try {
-        const chanRes  = await fetch('https://www.googleapis.com/youtube/v3/channels?part=id,contentDetails,statistics&forHandle=DailyNoons&key=' + YT_API_KEY);
+        // Step 1: Resolve channel ID from handle
+        const chanRes = await fetch(
+          `https://www.googleapis.com/youtube/v3/channels?part=id,contentDetails&forHandle=DailyNoons&key=${YT_API_KEY}`
+        );
         const chanData = await chanRes.json();
-        if (!chanData.items || chanData.items.length === 0) { renderError('Channel not found.'); return; }
-        const uploadsId = chanData.items[0].contentDetails.relatedPlaylists.uploads;
+
+        if (!chanData.items || chanData.items.length === 0) {
+          renderError('Channel not found. Please check your API key and channel handle.');
+          return;
+        }
+
+        const uploadsPlaylistId = chanData.items[0].contentDetails.relatedPlaylists.uploads;
         const channelId = chanData.items[0].id;
-        const s = chanData.items[0].statistics;
-        if (s) {
+
+        // Fetch channel statistics (subscribers, views, video count)
+        const statsRes2 = await fetch(
+          `https://www.googleapis.com/youtube/v3/channels?part=statistics&id=${channelId}&key=${YT_API_KEY}`
+        );
+        const statsData2 = await statsRes2.json();
+        if (statsData2.items && statsData2.items.length > 0) {
+          const s = statsData2.items[0].statistics;
           document.getElementById('stat-subscribers').textContent = formatViews(s.subscriberCount);
           document.getElementById('stat-videos').textContent      = formatViews(s.videoCount);
           document.getElementById('stat-views').textContent       = formatViews(s.viewCount);
         }
-        const plRes  = await fetch('https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=' + uploadsId + '&maxResults=' + MAX_VIDEOS + '&key=' + YT_API_KEY);
-        const plData = await plRes.json();
-        if (!plData.items || plData.items.length === 0) { renderError('No videos found.'); return; }
-        const videoIds  = plData.items.map(i => i.snippet.resourceId.videoId).join(',');
-        const stRes     = await fetch('https://www.googleapis.com/youtube/v3/videos?part=statistics&id=' + videoIds + '&key=' + YT_API_KEY);
-        const stData    = await stRes.json();
-        const statsMap  = {};
-        if (stData.items) stData.items.forEach(v => { statsMap[v.id] = v.statistics; });
-        const cards = plData.items.map(item => {
+
+        // Step 2: Fetch latest videos from uploads playlist
+        const playlistRes = await fetch(
+          `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=${uploadsPlaylistId}&maxResults=${MAX_VIDEOS}&key=${YT_API_KEY}`
+        );
+        const playlistData = await playlistRes.json();
+
+        if (!playlistData.items || playlistData.items.length === 0) {
+          renderError('No videos found.');
+          return;
+        }
+
+        // Step 3: Get video stats (views) for each video
+        const videoIds = playlistData.items.map(i => i.snippet.resourceId.videoId).join(',');
+        const statsRes = await fetch(
+          `https://www.googleapis.com/youtube/v3/videos?part=statistics&id=${videoIds}&key=${YT_API_KEY}`
+        );
+        const statsData = await statsRes.json();
+
+        const statsMap = {};
+        if (statsData.items) {
+          statsData.items.forEach(v => { statsMap[v.id] = v.statistics; });
+        }
+
+        // Step 4: Render cards
+        const cards = playlistData.items.map(item => {
+          // Normalize snippet to match search result format
           const vid = item.snippet.resourceId.videoId;
-          return renderVideoCard({ id: { videoId: vid }, snippet: item.snippet }, statsMap[vid]);
+          const normalized = { id: { videoId: vid }, snippet: item.snippet };
+          return renderVideoCard(normalized, statsMap[vid]);
         }).join('');
+
         grid.innerHTML = cards;
         initFilters();
+
       } catch (err) {
         console.error('YouTube API error:', err);
-        renderError('Could not load videos.');
+        renderError('Could not load videos. Please check your API key.');
       }
     }
 
-    // Google News RSS feed
-    const MAX_NEWS = 6;
-
-    function cleanTitle(title) { return title.replace(/\s*-\s*[^-]+$/, '').trim(); }
-    function extractSource(title) {
-      const match = title.match(/\s*-\s*([^-]+)$/);
-      return match ? match[1].trim() : 'Tech News';
-    }
-
-    function renderRssError() {
-      document.getElementById('news-grid').innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:2rem;color:#4a6a7a;font-size:13px;">Could not load news. <a href="#" onclick="loadNews();return false;" style="color:#4fc3f7;">Try again</a></div>';
-    }
-
-    async function loadNews() {
-      try {
-        const url  = 'https://api.rss2json.com/v1/api.json?rss_url=' + encodeURIComponent('https://news.google.com/rss/search?q=artificial+intelligence&hl=en-US&gl=US&ceid=US:en') + '&count=6';
-        const res  = await fetch(url);
-        const data = await res.json();
-        if (data.status === 'ok' && data.items && data.items.length > 0) {
-          document.getElementById('news-grid').innerHTML = data.items.slice(0, MAX_NEWS).map(item =>
-            '<div class="news-card" onclick="window.open('' + item.link + '','_blank')">'
-            + '<div class="news-card-tag">Tech &amp; AI</div>'
-            + '<div class="news-card-title">' + cleanTitle(item.title) + '</div>'
-            + '<div class="news-card-source"><div class="news-card-dot"></div><span>' + extractSource(item.title) + '</span><span style="margin-left:auto">' + timeAgo(item.pubDate) + '</span></div>'
-            + '</div>'
-          ).join('');
-          document.getElementById('news-status').textContent = 'Updated ' + new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
-        } else { renderRssError(); }
-      } catch (err) { console.error('RSS error:', err); renderRssError(); }
-    }
-
-    // Rundown AI RSS feed
-    async function loadRundownFeed() {
-      const grid = document.getElementById('rundown-grid');
-      try {
-        const proxyUrl = 'https://api.allorigins.win/get?url=' + encodeURIComponent('https://rss.beehiiv.com/feeds/2R3C6Bt5wj.xml');
-        const res  = await fetch(proxyUrl);
-        const json = await res.json();
-        if (!json.contents) throw new Error('No contents');
-        const parser = new DOMParser();
-        const xml    = parser.parseFromString(json.contents, 'application/xml');
-        const items  = Array.from(xml.querySelectorAll('item')).slice(0, 6);
-        if (items.length === 0) throw new Error('No items');
-        grid.innerHTML = items.map(function(item) {
-          var title   = item.querySelector('title') ? item.querySelector('title').textContent.trim() : 'Untitled';
-          var pubDate = item.querySelector('pubDate') ? item.querySelector('pubDate').textContent : '';
-          var ago     = pubDate ? timeAgo(pubDate) : 'Recently';
-          var guid    = item.querySelector('guid') ? item.querySelector('guid').textContent.trim() : '';
-          var link    = guid.indexOf('http') === 0 ? guid : 'https://www.therundown.ai';
-          return '<div class="news-card" onclick="window.open('' + link + '','_blank')">'
-            + '<div class="news-card-tag" style="color:#f59e0b;border-color:#f59e0b33;">The Rundown AI</div>'
-            + '<div class="news-card-title">' + title + '</div>'
-            + '<div class="news-card-source"><div class="news-card-dot"></div>'
-            + '<span>therundown.ai</span>'
-            + '<span style="margin-left:auto">' + ago + '</span></div></div>';
-        }).join('');
-      } catch (err) {
-        console.error('Rundown feed error:', err);
-        grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:2rem;color:#4a6a7a;font-size:13px;">Could not load feed. <a href="https://www.therundown.ai" target="_blank" style="color:#4fc3f7;">Visit therundown.ai</a></div>';
-      }
-    }
-
-    // Init
+    // Load videos on page load
     fetchVideos();
-    loadNews();
-    loadRundownFeed();
   </script>
 </body>
 </html>
