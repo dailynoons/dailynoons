@@ -4,3 +4,6 @@
 
 [functions."subscribe"]
   timeout = 10
+
+[functions."rss"]
+  timeout = 10
