@@ -5,6 +5,7 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>DailyNoons — Technology & AI Trends by Rob Nuno</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%230a1628'/><polygon points='16,3 27,9 27,23 16,29 5,23 5,9' fill='%230a1628' stroke='%231565c0' stroke-width='1.5'/><polygon points='16,6 24,11 24,21 16,26 8,21 8,11' fill='none' stroke='%235b21b6' stroke-width='0.8' opacity='0.8'/><path d='M10 11 L7 11 L7 21 L10 21' fill='none' stroke='%2300c4b4' stroke-width='1.8' stroke-linecap='round'/><path d='M22 11 L25 11 L25 21 L22 21' fill='none' stroke='%2300c4b4' stroke-width='1.8' stroke-linecap='round'/><text x='16' y='20' text-anchor='middle' font-family='sans-serif' font-size='9' font-weight='700' fill='%234fc3f7'>DN</text></svg>"/>
   <meta name="description" content="Tech insights, AI trends, and the stories shaping the future — explored and explained by Rob Nuno."/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -701,251 +702,49 @@
   </footer>
 
   <script>
-    // ── CONFIG ──────────────────────────────────────────────
-    const YT_API_KEY      = 'AIzaSyAe_LSSQlQQELKRv49Oe5Xk8xmLBBOk5EA';
-    const YT_CHANNEL_ID   = 'UCDailyNoons'; // resolved via handle below
-    const YT_CHANNEL_HANDLE = '@DailyNoons';
-    const MAX_VIDEOS        = 6;
-    const CK_FORM_ID        = '9345204';
-    const CK_API_KEY        = 'nPCgk1H25OzLoaiNe8waNQ';
-    // ────────────────────────────────────────────────────────
-
-    // Mobile nav toggle
-    const toggle = document.getElementById('mobileToggle');
-    const navLinks = document.getElementById('navLinks');
-    toggle.addEventListener('click', () => navLinks.classList.toggle('open'));
-
-    // Newsletter — submit to Netlify Forms + ConvertKit
-    async function handleSubscribe(e) {
-      e.preventDefault();
-      const input   = document.getElementById('emailInput');
-      const message = document.getElementById('nl-message');
-      const email   = input.value.trim();
-
-      if (!email || !email.includes('@')) {
-        input.style.borderColor = '#e24b4a';
-        message.style.color = '#e24b4a';
-        message.textContent = 'Please enter a valid email address.';
-        input.focus();
-        return;
-      }
-
-      const btn = e.target.querySelector('button[type="submit"]');
-      btn.disabled = true;
-      btn.textContent = 'Subscribing...';
-
-      try {
-        // Submit to Netlify Forms (captures in Netlify dashboard)
-        const formData = new FormData();
-        formData.append('form-name', 'newsletter');
-        formData.append('email', email);
-        const netlifyRes = await fetch('/', { method: 'POST', body: formData });
-        if (!netlifyRes.ok) throw new Error('Netlify submission failed');
-
-        // Submit to ConvertKit via Netlify Function
-        const ckRes = await fetch('/.netlify/functions/subscribe', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email })
-        });
-        const ckData = await ckRes.json();
-        if (!ckRes.ok || ckData.error) throw new Error(ckData.message || 'ConvertKit submission failed');
-
-        // Success
-        input.style.borderColor = '#00c4b4';
-        input.value = '';
-        input.placeholder = 'your@email.com';
-        message.style.color = '#00c4b4';
-        message.textContent = "✓ You're on the waitlist! Welcome to DailyNoons.";
-        btn.textContent = 'Joined!';
-        setTimeout(() => {
-          message.textContent = '';
-          input.style.borderColor = '';
-          btn.disabled = false;
-          btn.textContent = 'Join the Waitlist';
-        }, 5000);
-
-      } catch (err) {
-        console.error('Subscription error:', err);
-        message.style.color = '#e24b4a';
-        message.textContent = 'Something went wrong. Please try again.';
-        btn.disabled = false;
-        btn.textContent = 'Join the Waitlist';
-      }
-    }
-
-    // Smooth scroll for anchor links
-    document.querySelectorAll('a[href^="#"]').forEach(a => {
-      a.addEventListener('click', e => {
-        const target = document.querySelector(a.getAttribute('href'));
-        if (target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth' }); }
-      });
-    });
-
-    // ── YOUTUBE API ──────────────────────────────────────────
-
-    function timeAgo(dateStr) {
-      const diff = Math.floor((Date.now() - new Date(dateStr)) / 1000);
-      if (diff < 3600)   return Math.floor(diff / 60) + ' minutes ago';
-      if (diff < 86400)  return Math.floor(diff / 3600) + ' hours ago';
-      if (diff < 604800) return Math.floor(diff / 86400) + ' days ago';
-      if (diff < 2592000) return Math.floor(diff / 604800) + ' weeks ago';
-      return Math.floor(diff / 2592000) + ' months ago';
-    }
-
-    function formatViews(n) {
-      n = parseInt(n);
-      if (n >= 1000000) return (n / 1000000).toFixed(1) + 'M';
-      if (n >= 1000)    return (n / 1000).toFixed(1) + 'K';
-      return n.toString();
-    }
-
-    // Keyword-based topic detection from video title
-    function detectTopic(title) {
-      const t = title.toLowerCase();
-      if (/\b(ai|artificial intelligence|chatgpt|gpt|llm|machine learning|claude|gemini|copilot|openai|deepmind|neural|muse spark)\b/.test(t)) return 'ai';
-      if (/\b(security|cyber|hack|breach|malware|privacy|phishing|ransomware|vpn)\b/.test(t)) return 'security';
-      if (/\b(hardware|chip|cpu|gpu|apple silicon|processor|device|gadget|phone|laptop|iphone|samsung|robot)\b/.test(t)) return 'hardware';
-      if (/\b(cloud|aws|azure|google cloud|devops|kubernetes|docker|serverless|hosting)\b/.test(t)) return 'cloud';
-      if (/\b(startup|founder|venture|funding|ipo|acquisition|product launch)\b/.test(t)) return 'startups';
-      return 'all';
-    }
-
-    // Wire up topic filter chips (called after cards are rendered)
-    function initFilters() {
-      document.querySelectorAll('.topic-chip').forEach(chip => {
-        chip.addEventListener('click', () => {
-          document.querySelectorAll('.topic-chip').forEach(c => c.classList.remove('active'));
-          chip.classList.add('active');
-          const topic = chip.dataset.topic;
-          document.querySelectorAll('.video-card').forEach(card => {
-            const match = topic === 'all' || card.dataset.topic === topic;
-            card.style.display = match ? '' : 'none';
-          });
-        });
-      });
-    }
-
-    function renderVideoCard(video, stats) {
-      const vid     = video.id.videoId;
-      const title   = video.snippet.title;
-      const thumb   = video.snippet.thumbnails.medium.url;
-      const date    = video.snippet.publishedAt;
-      const views   = stats ? formatViews(stats.viewCount) + ' views' : '';
-      const ago     = timeAgo(date);
-      const topic   = detectTopic(title);
-
-      return `
-        <div class="video-card" data-topic="${topic}" onclick="window.open('https://www.youtube.com/watch?v=${vid}','_blank')">
-          <div class="video-thumb">
-            <img src="${thumb}" alt="${title.replace(/"/g,'&quot;')}"
-              style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:0;">
-            <div class="play-btn" style="position:relative;z-index:1;">
-              <svg viewBox="0 0 10 10"><polygon points="2,1 9,5 2,9"/></svg>
-            </div>
-          </div>
-          <div class="video-info">
-            <div class="video-title">${title}</div>
-            <div class="video-meta">
-              ${views ? `<span>${views}</span>` : ''}
-              <span>${ago}</span>
-            </div>
-          </div>
-        </div>`;
-    }
-
-    function renderError(msg) {
-      document.getElementById('videoGrid').innerHTML =
-        `<div style="grid-column:1/-1;text-align:center;padding:2rem;color:#4a6a7a;font-size:13px;">${msg}</div>`;
-    }
-
-    async function fetchVideos() {
-      const grid = document.getElementById('videoGrid');
-      try {
-        // Step 1: Resolve channel ID from handle
-        const chanRes = await fetch(
-          `https://www.googleapis.com/youtube/v3/channels?part=id,contentDetails&forHandle=DailyNoons&key=${YT_API_KEY}`
-        );
-        const chanData = await chanRes.json();
-
-        if (!chanData.items || chanData.items.length === 0) {
-          renderError('Channel not found. Please check your API key and channel handle.');
-          return;
-        }
-
-        const uploadsPlaylistId = chanData.items[0].contentDetails.relatedPlaylists.uploads;
-        const channelId = chanData.items[0].id;
-
-        // Fetch channel statistics (subscribers, views, video count)
-        const statsRes2 = await fetch(
-          `https://www.googleapis.com/youtube/v3/channels?part=statistics&id=${channelId}&key=${YT_API_KEY}`
-        );
-        const statsData2 = await statsRes2.json();
-        if (statsData2.items && statsData2.items.length > 0) {
-          const s = statsData2.items[0].statistics;
-          document.getElementById('stat-subscribers').textContent = formatViews(s.subscriberCount);
-          document.getElementById('stat-videos').textContent      = formatViews(s.videoCount);
-          document.getElementById('stat-views').textContent       = formatViews(s.viewCount);
-        }
-
-        // Step 2: Fetch latest videos from uploads playlist
-        const playlistRes = await fetch(
-          `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=${uploadsPlaylistId}&maxResults=${MAX_VIDEOS}&key=${YT_API_KEY}`
-        );
-        const playlistData = await playlistRes.json();
-
-        if (!playlistData.items || playlistData.items.length === 0) {
-          renderError('No videos found.');
-          return;
-        }
-
-        // Step 3: Get video stats (views) for each video
-        const videoIds = playlistData.items.map(i => i.snippet.resourceId.videoId).join(',');
-        const statsRes = await fetch(
-          `https://www.googleapis.com/youtube/v3/videos?part=statistics&id=${videoIds}&key=${YT_API_KEY}`
-        );
-        const statsData = await statsRes.json();
-
-        const statsMap = {};
-        if (statsData.items) {
-          statsData.items.forEach(v => { statsMap[v.id] = v.statistics; });
-        }
-
-        // Step 4: Render cards
-        const cards = playlistData.items.map(item => {
-          // Normalize snippet to match search result format
-          const vid = item.snippet.resourceId.videoId;
-          const normalized = { id: { videoId: vid }, snippet: item.snippet };
-          return renderVideoCard(normalized, statsMap[vid]);
-        }).join('');
-
-        grid.innerHTML = cards;
-        initFilters();
-
-      } catch (err) {
-        console.error('YouTube API error:', err);
-        renderError('Could not load videos. Please check your API key.');
-      }
-    }
-
-    // ── RUNDOWN AI RSS FEED ───────────────────────────────────
+    // RUNDOWN AI RSS FEED
     async function loadRundownFeed() {
       const grid = document.getElementById('rundown-grid');
       try {
-        // Use allorigins.win as a reliable CORS proxy to fetch the RSS feed
-        const proxyUrl = 'https://api.allorigins.win/get?url=' +
-          encodeURIComponent('https://rss.beehiiv.com/feeds/2R3C6Bt5wj.xml');
-        const res  = await fetch(proxyUrl);
-        const data = await res.json();
+        const feedUrl  = 'https://rss.beehiiv.com/feeds/2R3C6Bt5wj.xml';
+        const proxyUrl = 'https://api.allorigins.win/get?url=' + encodeURIComponent(feedUrl);
+        const res      = await fetch(proxyUrl);
+        const json     = await res.json();
 
-        // Parse the XML string
+        if (!json.contents) throw new Error('No contents');
+
         const parser = new DOMParser();
-        const xml    = parser.parseFromString(data.contents, 'text/xml');
+        const xml    = parser.parseFromString(json.contents, 'application/xml');
         const items  = Array.from(xml.querySelectorAll('item')).slice(0, 6);
 
-        if (items.length === 0) {
-          throw new Error('No items found');
-        }
+        if (items.length === 0) throw new Error('No items');
+
+        grid.innerHTML = items.map(item => {
+          const title   = item.querySelector('title')?.textContent?.trim() || 'Untitled';
+          const pubDate = item.querySelector('pubDate')?.textContent || '';
+          const ago     = pubDate ? timeAgo(pubDate) : 'Recently';
+          const guid    = item.querySelector('guid')?.textContent?.trim() || '';
+          const link    = guid.startsWith('http') ? guid : 'https://www.therundown.ai';
+          return \`
+            <div class="news-card" onclick="window.open('\${link}','_blank')">
+              <div class="news-card-tag" style="color:#f59e0b;border-color:#f59e0b33;">The Rundown AI</div>
+              <div class="news-card-title">\${title}</div>
+              <div class="news-card-source">
+                <div class="news-card-dot"></div>
+                <span>therundown.ai</span>
+                <span style="margin-left:auto">\${ago}</span>
+              </div>
+            </div>\`;
+        }).join('');
+
+      } catch (err) {
+        console.error('Rundown feed error:', err);
+        grid.innerHTML = \`
+          <div style="grid-column:1/-1;text-align:center;padding:2rem;color:#4a6a7a;font-size:13px;">
+            Could not load feed. <a href="https://www.therundown.ai" target="_blank" style="color:#4fc3f7;">Visit therundown.ai →</a>
+          </div>\`;
+      }
+    }
 
         grid.innerHTML = items.map(item => {
           const title   = item.querySelector('title')?.textContent || '';
