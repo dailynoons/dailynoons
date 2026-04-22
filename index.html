@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -344,6 +345,112 @@
     .video-title { font-size: 13px; font-weight: 600; color: #d0e8f5; line-height: 1.4; margin-bottom: 7px; }
     .video-meta  { font-size: 11px; color: var(--text-faint); display: flex; gap: 10px; }
 
+    /* ── AI NEWS ── */
+    .news-section {
+      border-top: 1px solid var(--border);
+      background: var(--navy-deep);
+    }
+
+    .news-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1.8rem;
+      flex-wrap: wrap;
+    }
+
+    .news-source-note {
+      font-size: 11px;
+      color: var(--text-faint);
+      letter-spacing: 0.5px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .news-pulse-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--teal);
+      box-shadow: 0 0 0 0 var(--teal);
+      animation: news-pulse 2s infinite;
+    }
+    @keyframes news-pulse {
+      0%   { box-shadow: 0 0 0 0 rgba(0, 196, 180, 0.7); }
+      70%  { box-shadow: 0 0 0 8px rgba(0, 196, 180, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(0, 196, 180, 0); }
+    }
+
+    .news-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 14px;
+    }
+
+    .news-card {
+      background: var(--navy-mid);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px 18px 14px;
+      cursor: pointer;
+      transition: border-color 0.2s, transform 0.15s, background 0.2s;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      min-height: 130px;
+      text-align: left;
+    }
+    .news-card:hover {
+      border-color: var(--teal);
+      transform: translateY(-2px);
+      background: #0e2238;
+    }
+
+    .news-source {
+      font-size: 10px;
+      letter-spacing: 1.5px;
+      color: var(--teal);
+      text-transform: uppercase;
+      font-weight: 700;
+      display: inline-block;
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .news-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #d0e8f5;
+      line-height: 1.4;
+      flex: 1;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .news-meta {
+      font-size: 11px;
+      color: var(--text-faint);
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-top: auto;
+    }
+    .news-meta svg { margin-left: auto; opacity: 0.5; transition: opacity 0.2s; }
+    .news-card:hover .news-meta svg { opacity: 1; color: var(--teal); }
+
+    .news-status {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 2rem;
+      color: #4a6a7a;
+      font-size: 13px;
+      letter-spacing: 1px;
+    }
+
     /* ── NEWSLETTER ── */
     .newsletter form { display: contents; }
     .newsletter {
@@ -446,6 +553,7 @@
     <div class="nav-links" id="navLinks">
       <a href="#">Home</a>
       <a href="#videos">Videos</a>
+      <a href="#news">News</a>
       <a href="#topics">Topics</a>
       <a href="#about">About</a>
     </div>
@@ -551,6 +659,25 @@
       <div class="video-loading" style="grid-column:1/-1;text-align:center;padding:2rem;color:#4a6a7a;font-size:13px;letter-spacing:1px;">
         Loading latest videos...
       </div>
+    </div>
+  </section>
+
+  <!-- AI NEWS -->
+  <section class="section news-section" id="news">
+    <div class="news-header">
+      <div>
+        <div class="section-label">AI Pulse</div>
+        <div class="section-title">Latest AI News</div>
+        <div class="section-sub">The stories driving the AI conversation — refreshed throughout the day</div>
+      </div>
+      <div class="news-source-note">
+        <span class="news-pulse-dot"></span>
+        Live from Google News
+      </div>
+    </div>
+
+    <div class="news-grid" id="newsGrid">
+      <div class="news-status">Loading AI news...</div>
     </div>
   </section>
 
@@ -823,6 +950,58 @@
 
     // Load videos on page load
     fetchVideos();
+
+    // ── AI NEWS ──────────────────────────────────────────────
+
+    function escapeHTML(str) {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function renderNewsCard(item) {
+      const title  = escapeHTML(item.title || 'Untitled');
+      const source = item.source ? escapeHTML(item.source) : '';
+      const ago    = item.pubDate ? timeAgo(item.pubDate) : '';
+      const link   = encodeURI(item.link || '#');
+
+      return `
+        <a class="news-card" href="${link}" target="_blank" rel="noopener noreferrer">
+          ${source ? `<div class="news-source">${source}</div>` : ''}
+          <div class="news-title">${title}</div>
+          <div class="news-meta">
+            ${ago ? `<span>${ago}</span>` : ''}
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M7 17L17 7M9 7h8v8"/>
+            </svg>
+          </div>
+        </a>
+      `;
+    }
+
+    async function fetchAINews() {
+      const grid = document.getElementById('newsGrid');
+      try {
+        const res = await fetch('/.netlify/functions/ai-news');
+        if (!res.ok) throw new Error('News fetch failed: ' + res.status);
+        const data = await res.json();
+
+        if (!data.items || data.items.length === 0) {
+          grid.innerHTML = `<div class="news-status">No news available right now. Check back soon.</div>`;
+          return;
+        }
+
+        grid.innerHTML = data.items.slice(0, 9).map(renderNewsCard).join('');
+      } catch (err) {
+        console.error('AI News error:', err);
+        grid.innerHTML = `<div class="news-status">Could not load news right now. Please check back later.</div>`;
+      }
+    }
+
+    fetchAINews();
   </script>
 </body>
 </html>
